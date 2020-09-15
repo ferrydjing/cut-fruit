@@ -121,6 +121,11 @@ function formatData(data, isMd5) {
 window.sendScore = sendScore;
 window.getRankList = getRankList;
 
+if (horizontal) {
+  $('.rank-list').css('height', '90%');
+} else {
+  $('.rank-list').css('height', '70%');
+}
 $('.rank-list').on(TOUCH_START, function (e) {
   e.stopPropagation();
 });

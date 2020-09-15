@@ -18,7 +18,6 @@ if (document.body.clientWidth < document.body.clientHeight) {
   globalScale = globalScaleX;
 }
 var dropY = Math.round(globalH * 0.9);
-console.log(dropY);
 
 void (function (global) {
   var mapping = {},
@@ -451,7 +450,7 @@ define('scripts/main.js', function (exports) {
     globalScaleY = globalH / 480;
     globalScaleXY = globalW / globalH;
     globalScaleOrigin = 640 / 480;
-    dropY = globalH * 0.9;
+    dropY = !horizontal ? globalH * 0.8 : globalH * 0.9;
     if (document.body.clientWidth < document.body.clientHeight) {
       globalScale = globalScaleX;
     }
@@ -636,7 +635,6 @@ define('scripts/sence.js', function (exports) {
     var onHide = function () {
       curSence.set(name);
       senceState.set('entering');
-      console.log(name);
       switch (name) {
         case 'home-menu':
           this.showMenu(onShow);
@@ -8365,24 +8363,24 @@ define('scripts/object/lose.js', function (exports) {
   var conf1 = {
     src: 'js/libs/images/x.png',
     sx: 650 * globalScaleX,
-    ex: 561 * globalScaleX,
-    y: 5 * globalScale,
+    ex: 551 * globalScaleX,
+    y: 15 * globalScale,
     w: 22 * globalScale,
     h: 19 * globalScale,
   };
   var conf2 = {
     src: 'js/libs/images/xx.png',
     sx: 671 * globalScaleX,
-    ex: 582 * globalScaleX,
-    y: 5 * globalScale,
+    ex: 572 * globalScaleX,
+    y: 15 * globalScale,
     w: 27 * globalScale,
     h: 26 * globalScale,
   };
   var conf3 = {
     src: 'js/libs/images/xxx.png',
     sx: 697 * globalScaleX,
-    ex: 608 * globalScaleX,
-    y: 6 * globalScale,
+    ex: 598 * globalScaleX,
+    y: 16 * globalScale,
     w: 31 * globalScale,
     h: 32 * globalScale,
   };
@@ -8740,19 +8738,28 @@ define('scripts/object/score.js', function (exports) {
     animLength = 500;
 
   var imageSx = -94 * globalScaleX,
-    imageEx = 6 * globalScaleX;
+    imageEx = 16 * globalScaleX;
   var text1Sx = -59 * globalScaleX,
-    text1Ex = 41 * globalScaleX;
+    text1Ex = 61 * globalScaleX;
   var text2Sx = -93 * globalScaleX,
-    text2Ex = 7 * globalScaleX;
+    text2Ex = 17 * globalScaleX;
 
   exports.anims = [];
 
   exports.set = function () {
     image = layer
-      .createImage('default', 'js/libs/images/score.png', imageSx, 8 * globalScale, 29 * globalScale, 31 * globalScale)
+      .createImage('default', 'js/libs/images/score.png', imageSx, 20 * globalScale, 29 * globalScale, 31 * globalScale)
       .hide();
-    text1 = layer.createText('default', '0', text1Sx, 24 * globalScale, '90-#fc7f0c-#ffec53', '30px').hide();
+    text1 = layer
+      .createText(
+        'default',
+        '0',
+        text1Sx,
+        34 * globalScale,
+        '90-#fc7f0c-#ffec53',
+        (30 * globalScale < 30 ? 30 : 30 * globalScale) + 'px'
+      )
+      .hide();
     text2 = layer.createText('default', '', text2Sx, 48 * globalScale, '#af7c05', '14px').hide();
   };
 
