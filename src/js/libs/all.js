@@ -456,13 +456,15 @@ define('scripts/main.js', function (exports) {
     }
     [timeline, sence, control].invoke('init');
 
-    log('正在加载鼠标控制脚本');
-    log('正在加载图像资源');
-    log('正在加载游戏脚本');
-    log('正在加载剧情');
-    log('正在初始化');
-    log('正在启动游戏...');
-    log.clear();
+    // log('正在加载鼠标控制脚本');
+    // log('正在加载图像资源');
+    // log('正在加载游戏脚本');
+    // log('正在加载剧情');
+    // log('正在初始化');
+    // log('正在启动游戏...');
+    // log.clear();
+
+    window.laodingRun();
 
     setTimeout(sence.switchSence.saturate(sence, 'home-menu'), 3000);
   };

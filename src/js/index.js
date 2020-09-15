@@ -5,22 +5,49 @@ import SDK from 'tmmtmm-js-sdk';
 const sdk = new SDK();
 window.TMMTMM_JS_SDK = sdk;
 window.gameScore = 0;
-startModule('scripts/main');
 const isTouch = 'ontouchstart' in window;
 const TOUCH_START = isTouch ? 'touchstart' : 'mousedown';
 const TOUCH_MOVE = isTouch ? 'touchmove' : 'mousemove';
 const TOUCH_END = isTouch ? 'touchend' : 'mouseup';
 const getAuth = (data) => {
-  formatData(data, true);
+  let params = formatData(data, true);
   $.ajax({
     method: 'POST',
     url: `${baseUrl}/third/third-member/info`,
-    data,
+    data: params,
     success: function (res) {
       console.log(res);
     },
   });
 };
+
+(function () {
+  var lastTime = 0;
+  var vendors = ['webkit', 'moz'];
+  for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+    window.cancelAnimationFrame =
+      window[vendors[x] + 'CancelAnimationFrame'] || // Webkit中此取消方法的名字变了
+      window[vendors[x] + 'CancelRequestAnimationFrame'];
+  }
+
+  if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = function (callback, element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
+      var id = window.setTimeout(function () {
+        callback(currTime + timeToCall);
+      }, timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
+    };
+  }
+  if (!window.cancelAnimationFrame) {
+    window.cancelAnimationFrame = function (id) {
+      clearTimeout(id);
+    };
+  }
+})();
 
 let obj = null;
 if (SOMETHINE === 'dev') {
@@ -55,12 +82,12 @@ if (!obj) {
     });
   }, 1000);
 } else {
-  // getAuth({
-  //   code: obj.authCode,
-  //   head_url: obj.avatar,
-  //   nick_name: obj.name,
-  //   timestamp: Math.round(new Date().getTime() / 1000),
-  // });
+  getAuth({
+    code: obj.authCode,
+    head_url: obj.avatar,
+    nick_name: obj.name,
+    timestamp: Math.round(new Date().getTime() / 1000),
+  });
 }
 
 $('.ph').on('click', function (e) {
@@ -97,9 +124,9 @@ const sendScore = (data) => {
 window.sendScore = sendScore;
 
 function formatData(data, isMd5) {
-  console.log(data);
   let params = '';
   data['appid'] = appid;
+  console.log(data);
   let strArr = Object.keys(data);
   strArr = strArr.sort();
   for (let key of strArr) {
@@ -156,3 +183,22 @@ const showRankList = () => {
   });
 };
 window.showRankList = showRankList;
+
+let tick = 0;
+
+const laodingRun = () => {
+  if (tick === 0) {
+    $('.loading').show();
+  }
+  tick++;
+  let per = (tick * 0.555555 < 100 ? tick * 0.555555 : 100).toFixed(1) + '%';
+  $('.loading .item').css('width', per);
+  $('.loading .num').html(per);
+  if (tick < 174) {
+    requestAnimationFrame(laodingRun);
+  } else {
+    $('.loading').hide();
+  }
+};
+window.laodingRun = laodingRun;
+startModule('scripts/main');

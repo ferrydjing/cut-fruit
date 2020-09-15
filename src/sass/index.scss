@@ -136,3 +136,33 @@ html {
     }
   }
 }
+
+.loading {
+  position: absolute;
+  display: none;
+  left: 50%;
+  top: 50%;
+  width: 90%;
+  z-index: 30;
+  transform: translate(-50%, -50%);
+  p {
+    font-size: rem(40);
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+  }
+  .loading-contanier {
+    position: relative;
+    margin-top: rem(10);
+    padding: rem(10);
+    width: 95%;
+    height: rem(40);
+    border: rem(8) solid #fff;
+    .item {
+      position: absolute;
+      height: calc(100% - 0.2rem);
+      width: 0%;
+      background: #fff;
+    }
+  }
+}
