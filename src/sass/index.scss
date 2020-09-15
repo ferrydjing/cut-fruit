@@ -1,0 +1,138 @@
+html {
+  font-size: 13.33333333vw;
+}
+
+@media (min-width: 560px) {
+  html {
+    font-size: 102.4px;
+  }
+}
+
+@function rem($px) {
+  @return $px / 100 * 1rem;
+}
+
+.rank-list {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 90%;
+  height: 90%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  z-index: 30;
+  overflow: hidden;
+  // transform: translate(-50%, -50%);
+  // background: url(~@/assets/imgs/panelBgMid.png) no-repeat;
+  background-size: 100%;
+  display: flex;
+  flex-direction: column;
+  display: none;
+  .header {
+    position: relative;
+    height: rem(80);
+    font-size: rem(50);
+    text-align: center;
+    color: #fff;
+    line-height: rem(80);
+    background: palevioletred;
+    .close {
+      position: absolute;
+      right: rem(20);
+      top: 50%;
+      transform: translateY(-50%);
+      width: rem(40);
+      height: rem(39);
+      background: url(~@/assets/imgs/panelClose.png) no-repeat;
+      background-size: 100%;
+      cursor: pointer;
+    }
+  }
+  @mixin dib {
+    display: inline-block;
+    vertical-align: top;
+  }
+  @mixin list-text {
+    font-size: rem(40);
+    line-height: rem(80);
+  }
+  .content {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    .item {
+      position: relative;
+      padding: rem(10);
+      font-size: 0;
+      &:not(:last-child) {
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 95%;
+          height: rem(1);
+          transform: translateX(-50%);
+          background: rgba($color: #fff, $alpha: 0.5);
+        }
+      }
+      span {
+        margin-right: rem(30);
+        color: tomato;
+        @include list-text();
+        @include dib;
+      }
+      img {
+        width: rem(80);
+        height: rem(80);
+        @include dib;
+      }
+      .name {
+        margin-left: rem(30);
+        color: white;
+        @include list-text();
+        @include dib();
+      }
+      .num {
+        float: right;
+        margin-left: rem(30);
+        color: tomato;
+        @include list-text();
+        @include dib();
+      }
+    }
+  }
+  .footer {
+    position: relative;
+    padding: rem(10);
+    font-size: 0;
+    background: rgba($color: #c4d20a, $alpha: 0.78);
+    span {
+      margin-right: rem(30);
+      color: tomato;
+      @include list-text();
+      @include dib;
+    }
+    img {
+      width: rem(80);
+      height: rem(80);
+      @include dib;
+    }
+    .name {
+      margin-left: rem(30);
+      color: white;
+      @include list-text();
+      @include dib();
+    }
+    .num {
+      float: right;
+      margin-left: rem(30);
+      color: tomato;
+      @include list-text();
+      @include dib();
+    }
+  }
+}

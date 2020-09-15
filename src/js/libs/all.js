@@ -17,7 +17,8 @@ var globalScaleOrigin = 640 / 480;
 if (document.body.clientWidth < document.body.clientHeight) {
   globalScale = globalScaleX;
 }
-var dropY = globalH * 0.9;
+var dropY = Math.round(globalH * 0.9);
+console.log(dropY);
 
 void (function (global) {
   var mapping = {},
@@ -305,6 +306,10 @@ define('scripts/game.js', function (exports) {
   });
 
   message.addEventListener('game.over', function () {
+    sendScore({
+      score: window.gameScore,
+      timestamp: Math.round(new Date().getTime() / 1000),
+    });
     exports.gameOver();
     knife.switchOn();
   });
@@ -317,7 +322,7 @@ define('scripts/game.js', function (exports) {
 
   message.addEventListener('click', function (e) {
     state('click-enable').off();
-    document.querySelector('.ph').classList.add('animate__animated', 'animate__zoomOut');
+    // document.querySelector('.ph').classList.add('animate__animated', 'animate__zoomOut');
     gameOver.hide();
 
     message.postMessage('home-menu', 'sence.switchSence');
@@ -631,6 +636,7 @@ define('scripts/sence.js', function (exports) {
     var onHide = function () {
       curSence.set(name);
       senceState.set('entering');
+      console.log(name);
       switch (name) {
         case 'home-menu':
           this.showMenu(onShow);
@@ -749,8 +755,10 @@ define('scripts/sence.js', function (exports) {
 
   // to enter dojo mode
   exports.showDojo = function (callback) {
-    developing.show(250);
-    setTimeout(callback, 1500);
+    // developing.show(250);
+    // setTimeout(callback, 1500);
+    showRankList();
+    setTimeout(callback, 0);
   };
 
   // to exit dojo mode
@@ -1250,7 +1258,7 @@ define('scripts/factory/fruit.js', function (exports) {
     return ((a + b) / 2) >> 0;
   };
 
-  var dropTime = 1200,
+  var dropTime = 1200 * globalScaleY > 1200 ? 1200 : 1200 * globalScaleY,
     dropXScope = 200,
     shadowPos = 50;
 
@@ -1630,7 +1638,11 @@ define('scripts/factory/fruit.js', function (exports) {
   // privates
 
   ClassFruit.prototype.checkForFallOutOfViewer = function (y) {
-    if (y * globalScaleY > globalH + this.radius)
+    let s = globalScaleY;
+    if (globalScaleY < 1) {
+      s = globalScaleX;
+    }
+    if (y * s > globalH + this.radius)
       (this.checkForFallOutOfViewer = Ucren.nul),
         this.rotateAnim && this.rotateAnim.stop(),
         message.postMessage(this, 'fruit.fallOutOfViewer');
@@ -7098,13 +7110,8 @@ define('scripts/lib/ucren.js', function (exports) {
             nie = !Ucren.isIe && e.button != 0;
             if ((ie || nie) && !this.isTouch) this.endDrag();
             var coors = this.getCoors(e);
-            if (!horizontal) {
-              draging.newMouseX = coors[0];
-              draging.newMouseY = coors[1];
-            } else {
-              draging.newMouseX = coors[0];
-              draging.newMouseY = coors[1];
-            }
+            draging.newMouseX = coors[0];
+            draging.newMouseY = coors[1] - 40;
             e.stopPropagation && e.stopPropagation();
             return (e.returnValue = false);
           }.bind(this)
@@ -7596,7 +7603,7 @@ define('scripts/object/background.js', function (exports) {
   var random = Ucren.randomNumber;
 
   exports.set = function () {
-    image = layer.createImage('default', 'js/libs/images/background.jpg', 0, 0, globalW, globalH);
+    image = layer.createImage('default', 'js/libs/images/background.png', 0, 0, globalW, globalH);
   };
 
   exports.wobble = function () {
@@ -8026,8 +8033,8 @@ define('scripts/object/game-over.js', function (exports) {
     if (mode == 'show') {
       this.image.show();
       // this.newG.show()
-      document.querySelector('.ph').style.display = 'block';
-      document.querySelector('.ph').style.top = 198 * globalScaleY + 85 * globalScale + 20 + 'px';
+      // document.querySelector('.ph').style.display = 'block';
+      // document.querySelector('.ph').style.top = 198 * globalScaleY + 85 * globalScale + 20 + 'px';
     }
   };
 
@@ -8040,9 +8047,9 @@ define('scripts/object/game-over.js', function (exports) {
     if (mode == 'show') {
       state('click-enable').on();
     } else if (mode === 'hide') {
-      document.querySelector('.ph').style.display = 'none';
+      // document.querySelector('.ph').style.display = 'none';
       this.image.hide();
-      document.querySelector('.ph').classList.remove('animate__animated', 'animate__zoomOut');
+      // document.querySelector('.ph').classList.remove('animate__animated', 'animate__zoomOut');
       // this.newG.hide()
     }
   };
@@ -8746,10 +8753,11 @@ define('scripts/object/score.js', function (exports) {
       .createImage('default', 'js/libs/images/score.png', imageSx, 8 * globalScale, 29 * globalScale, 31 * globalScale)
       .hide();
     text1 = layer.createText('default', '0', text1Sx, 24 * globalScale, '90-#fc7f0c-#ffec53', '30px').hide();
-    text2 = layer.createText('default', 'BEST 999', text2Sx, 48 * globalScale, '#af7c05', '14px').hide();
+    text2 = layer.createText('default', '', text2Sx, 48 * globalScale, '#af7c05', '14px').hide();
   };
 
   exports.show = function (start) {
+    window.gameScore = 0;
     timeline.createTask({
       start: start,
       duration: animLength,
@@ -8777,6 +8785,7 @@ define('scripts/object/score.js', function (exports) {
 
   exports.number = function (number) {
     text1.attr('text', number || 0);
+    window.gameScore = number;
     image.scale(1.2, 1.2);
     setTimeout(function () {
       image.scale(1, 1);

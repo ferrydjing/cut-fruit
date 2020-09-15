@@ -1,35 +1,35 @@
-const path = require('path')
-const glob = require('glob')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const opimizeCss = require('optimize-css-assets-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
-const copyWebpackPlugin = require('copy-webpack-plugin')
-var webpack = require('webpack')
+const path = require('path');
+const glob = require('glob');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const opimizeCss = require('optimize-css-assets-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const copyWebpackPlugin = require('copy-webpack-plugin');
+var webpack = require('webpack');
 
 module.exports = {
   entry: getEntry(),
   output: {
     filename: 'js/[name].[hash:8].js',
     // chunkFilename: '[name]-vendors-[hash:8].js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
-      // {
-      //   test: /\.js$/,
-      //   include: [path.resolve(__dirname, 'src')],
-      //   exclude: /(node_modules|bower_components)/,
-      //   use: {
-      //     loader: 'babel-loader',
-      //     options: {
-      //       presets: ['@babel/preset-env'],
-      //       plugins: ['@babel/plugin-transform-runtime']
-      //       // outputPath: 'js/'
-      //     }
-      //   }
-      // },
+      {
+        test: /\.js$/,
+        include: [path.resolve(__dirname, 'src')],
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-transform-runtime'],
+            // outputPath: 'js/'
+          },
+        },
+      },
 
       {
         test: /\.scss$/,
@@ -38,8 +38,8 @@ module.exports = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               // publicPath: path.resolve(__dirname, 'dist')
-              outputPath: 'css'
-            }
+              outputPath: 'css',
+            },
           },
           'css-loader',
           {
@@ -50,18 +50,18 @@ module.exports = {
               plugins: (loader) => [
                 // 可以配置多个插件
                 require('autoprefixer')({
-                  overrideBrowserslist: ['> 1%', 'last 2 versions', 'ie >= 8']
-                })
-              ]
-            }
+                  overrideBrowserslist: ['> 1%', 'last 2 versions', 'ie >= 8'],
+                }),
+              ],
+            },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|gif|jpg|svg)$/,
@@ -72,10 +72,10 @@ module.exports = {
               esModule: false,
               limit: 1024,
               name: 'imgs/[name].[hash:8].[ext]',
-              publicPath: '../'
-            }
-          }
-        ]
+              publicPath: '../',
+            },
+          },
+        ],
       },
       // 路径
       {
@@ -84,11 +84,11 @@ module.exports = {
           {
             loader: 'html-loader',
             options: {
-              attrs: ['img:src']
+              attrs: ['img:src'],
               // publicPath: './'
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|ttc|otf)$/,
@@ -97,12 +97,12 @@ module.exports = {
             loader: 'file-loader',
             options: {
               name: 'fonts/[name].[hash:8].[ext]',
-              publicPath: '../'
-            }
-          }
-        ]
-      }
-    ]
+              publicPath: '../',
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -110,23 +110,23 @@ module.exports = {
       // Options similar to the same options in webpackOptions.output
       // both options are optional
       filename: 'css/[name].[hash:8].css',
-      chunkFilename: 'css/[id].css'
+      chunkFilename: 'css/[id].css',
     }),
     new copyWebpackPlugin([
       {
         from: path.resolve(__dirname, './src/js/libs'),
         to: './js/libs',
-        ignore: ['.*']
-      }
+        ignore: ['.*'],
+      },
     ]),
-    require('autoprefixer')
+    require('autoprefixer'),
   ],
   resolve: {
     extensions: ['.js', '.json', '.jsx', '.scss', '.css'], //用到文件的扩展名
     alias: {
       //模快别名列表
-      '@': path.resolve(__dirname, 'src')
-    }
+      '@': path.resolve(__dirname, 'src'),
+    },
   },
   optimization: {
     splitChunks: {
@@ -137,9 +137,9 @@ module.exports = {
           chunks: 'initial',
           name: 'vendor', // 打包后的文件名，任意命名
           // 设置优先级，防止和自定义的公共代码提取时被覆盖，不进行打包
-          priority: 10
-        }
-      }
+          priority: 10,
+        },
+      },
     },
     minimizer: [
       new TerserPlugin({
@@ -150,22 +150,22 @@ module.exports = {
           output: {
             ecma: 4,
             beautify: false,
-            comments: false
+            comments: false,
           },
           compress: {
-            drop_console: true
-          }
-        }
+            drop_console: false,
+          },
+        },
       }),
       new opimizeCss({
         cssProcessor: require('cssnano'),
         cssProcessorOptions: {
           safe: true,
-          discardComments: { removeAll: true }
+          discardComments: { removeAll: true },
         },
-        canPrint: true
-      })
-    ]
+        canPrint: true,
+      }),
+    ],
   },
   devServer: {
     port: 3000,
@@ -183,12 +183,12 @@ module.exports = {
         changeOrigin: true,
         secure: false,
         pathRewrite: {
-          '/server': '/'
-        }
-      }
-    }
-  }
-}
+          '/server': '/',
+        },
+      },
+    },
+  },
+};
 
 // 获取html-webpack-plugin参数的方法
 var getHtmlConfig = function (name, chunks) {
@@ -205,37 +205,35 @@ var getHtmlConfig = function (name, chunks) {
         : {
             removeComments: true, //移除HTML中的注释
             collapseWhitespace: false, //折叠空白区域 也就是压缩代码
-            removeAttributeQuotes: true //去除属性引用
-          }
-  }
-}
+            removeAttributeQuotes: true, //去除属性引用
+          },
+  };
+};
 
 function getEntry() {
-  var entry = {}
+  var entry = {};
   //读取src目录所有page入口
   glob.sync('./src/*.html').forEach(function (name) {
     var start = name.indexOf('src/') + 4,
-      end = name.length - 4
-    var n = name.slice(start, end)
-    n = n.slice(0, n.lastIndexOf('/')) //保存各个组件的入口
-    entry[n] = `./src/js/${n}.js`
-  })
-  return entry
+      end = name.length - 4;
+    var n = name.slice(start, end);
+    n = n.slice(0, n.lastIndexOf('/')); //保存各个组件的入口
+    entry[n] = `./src/js/${n}.js`;
+  });
+  return entry;
 }
 
 //配置页面
-const entryObj = getEntry()
-const htmlArray = []
+const entryObj = getEntry();
+const htmlArray = [];
 Object.keys(entryObj).forEach((element) => {
   htmlArray.push({
     _html: element,
     title: '',
-    chunks: ['vendor', element]
-  })
-})
+    chunks: ['vendor', element],
+  });
+});
 //自动生成html模板
 htmlArray.forEach((element) => {
-  module.exports.plugins.push(
-    new HtmlWebpackPlugin(getHtmlConfig(element._html, element.chunks))
-  )
-})
+  module.exports.plugins.push(new HtmlWebpackPlugin(getHtmlConfig(element._html, element.chunks)));
+});
