@@ -168,7 +168,7 @@ module.exports = {
     ],
   },
   devServer: {
-    port: 3000,
+    port: 3005,
     contentBase: './dist',
     open: true,
     progress: true,

@@ -50,7 +50,7 @@ const getAuth = (data) => {
 })();
 
 let obj = null;
-if (SOMETHINE === 'dev') {
+if (SOMETHINE !== 'build') {
   obj = {
     authCode: '0f3d6c55b5f31d5e017fcf3421ec45fff709bf3f',
     avatar: 'https://static.tmmtmm.com.tr/member/avatar/default/6.jpg',
@@ -65,29 +65,6 @@ if (SOMETHINE === 'dev') {
   } catch (error) {
     console.log(error);
   }
-}
-
-if (!obj) {
-  setTimeout(() => {
-    sdk.trigger('authorization', {
-      callback: (code, msg, data) => {
-        console.log(code, msg, data);
-        getAuth({
-          code: data.authCode,
-          head_url: data.avatar,
-          nick_name: data.name,
-          timestamp: Math.round(new Date().getTime() / 1000),
-        });
-      },
-    });
-  }, 1000);
-} else {
-  getAuth({
-    code: obj.authCode,
-    head_url: obj.avatar,
-    nick_name: obj.name,
-    timestamp: Math.round(new Date().getTime() / 1000),
-  });
 }
 
 $('.ph').on('click', function (e) {
@@ -126,6 +103,7 @@ window.sendScore = sendScore;
 function formatData(data, isMd5) {
   let params = '';
   data['appid'] = appid;
+  data.timestamp = Math.round(new Date().getTime() / 1000);
   console.log(data);
   let strArr = Object.keys(data);
   strArr = strArr.sort();
@@ -181,16 +159,46 @@ const showRankList = () => {
     $('.rank-list').removeClass('animate__animated animate__bounceIn');
     $('.rank-list').off('animationend');
   });
+  getRankList({
+    openid: '',
+  });
 };
 window.showRankList = showRankList;
 
-let tick = 0;
+const runGetAuth = () => {
+  if (!obj) {
+    sdk.trigger('authorization', {
+      callback: (code, msg, data) => {
+        console.log(code, msg, data);
+        getAuth({
+          code: data.authCode,
+          head_url: data.avatar,
+          nick_name: data.name,
+          timestamp: Math.round(new Date().getTime() / 1000),
+        });
+      },
+    });
+  } else {
+    // getAuth({
+    //   code: obj.authCode,
+    //   head_url: obj.avatar,
+    //   nick_name: obj.name,
+    //   timestamp: Math.round(new Date().getTime() / 1000),
+    // });
+  }
+};
 
+let tick = 0;
+let runAuth;
 const laodingRun = () => {
   if (tick === 0) {
     $('.loading').show();
   }
   tick++;
+  if ((sdk.readyState || SOMETHINE === 'dev') && !runAuth) {
+    runAuth = true;
+    runGetAuth();
+  }
   let per = (tick * 0.555555 < 100 ? tick * 0.555555 : 100).toFixed(1) + '%';
   $('.loading .item').css('width', per);
   $('.loading .num').html(per);
@@ -202,3 +210,15 @@ const laodingRun = () => {
 };
 window.laodingRun = laodingRun;
 startModule('scripts/main');
+
+if (SOMETHINE !== 'build') {
+  $('.testtest').show();
+  $('.testtest').on('click', function () {
+    getAuth({
+      code: obj.authCode,
+      head_url: obj.avatar,
+      nick_name: obj.name,
+      timestamp: Math.round(new Date().getTime() / 1000),
+    });
+  });
+}

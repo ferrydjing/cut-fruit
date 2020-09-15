@@ -637,6 +637,7 @@ define('scripts/sence.js', function (exports) {
     var onHide = function () {
       curSence.set(name);
       senceState.set('entering');
+      console.log(name);
       switch (name) {
         case 'home-menu':
           this.showMenu(onShow);
@@ -645,6 +646,9 @@ define('scripts/sence.js', function (exports) {
           this.showDojo(onShow);
           break;
         case 'game-body':
+          // name = 'home-menu';
+          // this.showMenu(onShow);
+          // return;
           this.showNewGame(onShow);
           break;
         case 'quit-body':
