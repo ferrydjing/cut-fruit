@@ -81,7 +81,9 @@ html {
       }
       span {
         margin-right: rem(30);
+        min-width: rem(45);
         color: tomato;
+        text-align: center;
         @include list-text();
         @include dib;
       }
@@ -114,6 +116,8 @@ html {
     span {
       margin-right: rem(30);
       color: tomato;
+      min-width: rem(45);
+      text-align: center;
       @include list-text();
       @include dib;
     }

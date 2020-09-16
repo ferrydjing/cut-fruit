@@ -480,6 +480,9 @@ define('scripts/main.js', function (exports) {
   });
 
   message.addEventListener('slice.at', function (fruit, angle) {
+    if (!window.getCode()) {
+      return;
+    }
     if (state('sence-state').isnot('ready')) return;
 
     if (state('sence-name').is('game-body')) {
@@ -492,6 +495,7 @@ define('scripts/main.js', function (exports) {
       if (fruit.isHomeMenu)
         switch (1) {
           case fruit.isDojoIcon:
+            showRankList();
             sence.switchSence('dojo-body');
             break;
           case fruit.isNewGameIcon:
@@ -761,7 +765,6 @@ define('scripts/sence.js', function (exports) {
   exports.showDojo = function (callback) {
     // developing.show(250);
     // setTimeout(callback, 1500);
-    showRankList();
     setTimeout(callback, 0);
   };
 

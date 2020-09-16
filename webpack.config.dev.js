@@ -7,7 +7,7 @@ module.exports = merge(common, {
   //注意这里的写法
   plugins: [
     new webpack.DefinePlugin({
-      SOMETHINE: '"dev"',
+      CUT_APP_ENV: '"dev"',
     }),
   ],
 });

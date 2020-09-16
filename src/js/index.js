@@ -1,5 +1,6 @@
 import '@babel/polyfill';
 import '../sass/index.scss';
+import { store } from '@ferrydjing/utils';
 import { baseUrl, appid, appsecret } from './config';
 import SDK from 'tmmtmm-js-sdk';
 const sdk = new SDK();
@@ -9,14 +10,38 @@ const isTouch = 'ontouchstart' in window;
 const TOUCH_START = isTouch ? 'touchstart' : 'mousedown';
 const TOUCH_MOVE = isTouch ? 'touchmove' : 'mousemove';
 const TOUCH_END = isTouch ? 'touchend' : 'mouseup';
+let user_info = store.get('_info', true);
+window.store = store;
+const getCode = () => {
+  if (!user_info) {
+    sdk.trigger('authorization', {
+      callback: (code, msg, data) => {
+        console.log(code, msg, data);
+        getAuth({
+          code: data.authCode,
+          head_url: data.avatar,
+          nick_name: data.name,
+          timestamp: Math.round(new Date().getTime() / 1000),
+        });
+      },
+    });
+    return false;
+  }
+  return true;
+};
+
+window.getCode = getCode;
 const getAuth = (data) => {
   let params = formatData(data, true);
   $.ajax({
     method: 'POST',
     url: `${baseUrl}/third/third-member/info`,
     data: params,
-    success: function (res) {
-      console.log(res);
+    success: function ({ data }) {
+      if (data) {
+        user_info = data;
+        store.set('_info', data, true);
+      }
     },
   });
 };
@@ -49,44 +74,52 @@ const getAuth = (data) => {
   }
 })();
 
-let obj = null;
-if (SOMETHINE !== 'build') {
-  obj = {
-    authCode: '0f3d6c55b5f31d5e017fcf3421ec45fff709bf3f',
-    avatar: 'https://static.tmmtmm.com.tr/member/avatar/default/6.jpg',
-    name: 'ferry',
-  };
-} else {
-  try {
-    let ret = localStorage.getItem('user_auth_info');
-    if (ret) {
-      obj = JSON.parse(ret);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 $('.ph').on('click', function (e) {
   e.stopPropagation();
   console.log(11111);
 });
 
-const getRankList = (data) => {
+const getRankList = (data = {}) => {
+  console.log(user_info);
+  data.openid = user_info.openid;
+  data.num = 20;
   formatData(data, true);
   $.ajax({
     url: `${baseUrl}/third/third-member/top`,
     method: 'POST',
     data,
-    success: function (res) {
-      console.log(res);
+    success: function ({ data }) {
+      if (data) {
+        const self = data.pop();
+        $('.rank-list .footer img').attr('src', self.head_url);
+        $('.rank-list .footer .name').html(self.nick_name);
+        $('.rank-list .footer .num').html(self.score);
+        let str = '';
+        let rank = '未上榜';
+        for (let i = 0, len = data.length; i < len; i++) {
+          if (self.id === data[i].id) {
+            rank = i + 1;
+          }
+          str += `
+            <div class="item">
+              <span>${i + 1}</span>
+              <img src="${data[i].head_url}" />
+              <div class="name">${data[i].nick_name}</div>
+              <div class="num">${data[i].score}</div>
+            </div>
+          `;
+        }
+        $('.rank-list .content').html(str);
+        $('.rank-list  .footer span').html(rank);
+      }
     },
   });
 };
 
 const sendScore = (data) => {
   window.gameScore = 0;
-  data.openid = '';
+  data.openid = user_info.openid;
+  console.log(data);
   formatData(data, true);
   $.ajax({
     url: `${baseUrl}/third/third-member/score`,
@@ -153,40 +186,18 @@ $('.rank-list .close').on('click', function (e) {
 });
 
 const showRankList = () => {
+  if (!getCode()) {
+    return;
+  }
+  getRankList();
   $('.rank-list').css('display', 'flex');
   $('.rank-list').addClass('animate__animated animate__bounceIn');
   $('.rank-list').on('animationend', function () {
     $('.rank-list').removeClass('animate__animated animate__bounceIn');
     $('.rank-list').off('animationend');
   });
-  getRankList({
-    openid: '',
-  });
 };
 window.showRankList = showRankList;
-
-const runGetAuth = () => {
-  if (!obj) {
-    sdk.trigger('authorization', {
-      callback: (code, msg, data) => {
-        console.log(code, msg, data);
-        getAuth({
-          code: data.authCode,
-          head_url: data.avatar,
-          nick_name: data.name,
-          timestamp: Math.round(new Date().getTime() / 1000),
-        });
-      },
-    });
-  } else {
-    // getAuth({
-    //   code: obj.authCode,
-    //   head_url: obj.avatar,
-    //   nick_name: obj.name,
-    //   timestamp: Math.round(new Date().getTime() / 1000),
-    // });
-  }
-};
 
 let tick = 0;
 let runAuth;
@@ -195,9 +206,9 @@ const laodingRun = () => {
     $('.loading').show();
   }
   tick++;
-  if ((sdk.readyState || SOMETHINE === 'dev') && !runAuth) {
+  if ((sdk.readyState || CUT_APP_ENV === 'dev') && !runAuth && !user_info) {
     runAuth = true;
-    runGetAuth();
+    getCode();
   }
   let per = (tick * 0.555555 < 100 ? tick * 0.555555 : 100).toFixed(1) + '%';
   $('.loading .item').css('width', per);
@@ -210,15 +221,3 @@ const laodingRun = () => {
 };
 window.laodingRun = laodingRun;
 startModule('scripts/main');
-
-if (SOMETHINE !== 'build') {
-  $('.testtest').show();
-  $('.testtest').on('click', function () {
-    getAuth({
-      code: obj.authCode,
-      head_url: obj.avatar,
-      nick_name: obj.name,
-      timestamp: Math.round(new Date().getTime() / 1000),
-    });
-  });
-}
