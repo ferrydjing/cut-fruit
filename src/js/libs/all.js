@@ -146,7 +146,7 @@ define('scripts/control.js', function (exports) {
   };
 
   exports.installDragger = function () {
-    var dragger = new Ucren.BasicDrag({ type: 'calc' });
+    var dragger = new Ucren.BasicDrag({ type: 'calc', message: message, state: state });
 
     dragger.on('returnValue', function (dx, dy, x, y, kf) {
       if ((kf = knife.through(x - canvasLeft, y - canvasTop))) message.postMessage(kf, 'slice');
@@ -323,7 +323,6 @@ define('scripts/game.js', function (exports) {
     state('click-enable').off();
     // document.querySelector('.ph').classList.add('animate__animated', 'animate__zoomOut');
     gameOver.hide();
-
     message.postMessage('home-menu', 'sence.switchSence');
   });
 
@@ -483,6 +482,13 @@ define('scripts/main.js', function (exports) {
     if (!window.getCode()) {
       return;
     }
+    if (fruit.isHomeMenu) {
+      switch (1) {
+        case fruit.isDojoIcon:
+          window.showRankList();
+          return;
+      }
+    }
     if (state('sence-state').isnot('ready')) return;
 
     if (state('sence-name').is('game-body')) {
@@ -495,7 +501,6 @@ define('scripts/main.js', function (exports) {
       if (fruit.isHomeMenu)
         switch (1) {
           case fruit.isDojoIcon:
-            showRankList();
             sence.switchSence('dojo-body');
             break;
           case fruit.isNewGameIcon:
@@ -532,7 +537,6 @@ define('scripts/message.js', function (exports) {
   exports.postMessage = function (message /*, message, message... */, to) {
     var messages = [].slice.call(arguments, 0),
       splitIndex = messages.length - 1;
-
     to = messages[splitIndex];
     messages.slice(0, splitIndex);
 
@@ -6351,6 +6355,8 @@ define('scripts/lib/ucren.js', function (exports) {
   var blankArray = [];
   var slice = blankArray.slice;
   var join = blankArray.join;
+  var message, state;
+  // var message = require('scripts/message');
 
   //
   // [基本数据类型扩展]
@@ -7019,6 +7025,10 @@ define('scripts/lib/ucren.js', function (exports) {
   // Ucren.BasicDrag
   Ucren.BasicDrag = Ucren.Class(
     /* constructor */ function (conf) {
+      if (conf.message) {
+        message = conf.message;
+        state = conf.state;
+      }
       conf = Ucren.fixConfig(conf);
       this.type = Ucren.fixString(conf.type, 'normal');
 
@@ -7037,6 +7047,9 @@ define('scripts/lib/ucren.js', function (exports) {
         var evt = {};
 
         evt[this.TOUCH_START] = function (e) {
+          if (state('click-enable').ison()) {
+            message.postMessage('click');
+          }
           e = Ucren.Event(e);
           this.startDrag();
           e.cancelBubble = true;
