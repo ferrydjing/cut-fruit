@@ -10,6 +10,9 @@ const isTouch = 'ontouchstart' in window;
 const TOUCH_START = isTouch ? 'touchstart' : 'mousedown';
 const TOUCH_MOVE = isTouch ? 'touchmove' : 'mousemove';
 const TOUCH_END = isTouch ? 'touchend' : 'mouseup';
+if (CUT_APP_ENV !== 'build') {
+  new VConsole();
+}
 let user_info = store.get('_info', true);
 window.store = store;
 const getCode = () => {
