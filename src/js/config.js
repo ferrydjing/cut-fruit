@@ -7,5 +7,9 @@ if (CUT_APP_ENV === 'build') {
 } else {
   baseUrl = 'https://pre-open-api.hula.vip';
 }
+const isTouch = 'ontouchstart' in window;
+const TOUCH_START = isTouch ? 'touchstart' : 'mousedown';
+const TOUCH_MOVE = isTouch ? 'touchmove' : 'mousemove';
+const TOUCH_END = isTouch ? 'touchend' : 'mouseup';
 
-export { baseUrl, appid, appsecret };
+export { baseUrl, appid, appsecret, TOUCH_START, TOUCH_MOVE, TOUCH_END };

@@ -157,6 +157,7 @@ define('scripts/control.js', function (exports) {
     });
 
     dragger.bind(document.documentElement);
+    window._dragger = dragger;
   };
 
   exports.installClicker = function () {

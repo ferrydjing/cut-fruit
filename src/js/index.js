@@ -1,15 +1,12 @@
 import '@babel/polyfill';
 import '../sass/index.scss';
 import { store } from '@ferrydjing/utils';
-import { baseUrl, appid, appsecret } from './config';
+import { baseUrl, appid, appsecret, TOUCH_START, TOUCH_MOVE, TOUCH_END } from './config';
 import SDK from 'tmmtmm-js-sdk';
 const sdk = new SDK();
 window.TMMTMM_JS_SDK = sdk;
 window.gameScore = 0;
-const isTouch = 'ontouchstart' in window;
-const TOUCH_START = isTouch ? 'touchstart' : 'mousedown';
-const TOUCH_MOVE = isTouch ? 'touchmove' : 'mousemove';
-const TOUCH_END = isTouch ? 'touchend' : 'mouseup';
+
 if (CUT_APP_ENV !== 'build') {
   new VConsole();
 }
@@ -189,9 +186,13 @@ $('.rank-list .close').on('click', function (e) {
 });
 
 const showRankList = () => {
+  if (window._dragger) {
+    window._dragger.endDrag();
+  }
   if (!getCode()) {
     return;
   }
+
   getRankList();
   $('.rank-list').css('display', 'flex');
   $('.rank-list').addClass('animate__animated animate__bounceIn');
