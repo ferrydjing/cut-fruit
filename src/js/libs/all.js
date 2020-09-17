@@ -658,6 +658,7 @@ define('scripts/sence.js', function (exports) {
           // name = 'home-menu';
           // this.showMenu(onShow);
           // return;
+          $('.rank-list').hide();
           this.showNewGame(onShow);
           break;
         case 'quit-body':
