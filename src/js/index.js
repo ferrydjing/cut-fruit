@@ -14,16 +14,18 @@ let user_info = store.get('_info', true);
 window.store = store;
 const getCode = () => {
   if (!user_info) {
-    sdk.trigger('authorization', {
-      callback: (code, msg, data) => {
-        console.log(code, msg, data);
-        getAuth({
-          code: data.authCode,
-          head_url: data.avatar,
-          nick_name: data.name,
-          timestamp: Math.round(new Date().getTime() / 1000),
-        });
-      },
+    sdk.ready(() => {
+      sdk.trigger('authorization', {
+        callback: (code, msg, data) => {
+          console.log(code, msg, data);
+          getAuth({
+            code: data.authCode,
+            head_url: data.avatar,
+            nick_name: data.name,
+            timestamp: Math.round(new Date().getTime() / 1000),
+          });
+        },
+      });
     });
     return false;
   }
