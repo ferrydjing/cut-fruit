@@ -3,6 +3,9 @@ import '../sass/index.scss';
 import { store } from '@ferrydjing/utils';
 import { baseUrl, appid, appsecret, TOUCH_START, TOUCH_MOVE, TOUCH_END } from './config';
 import SDK from 'tmmtmm-js-sdk';
+/**
+ * 初始化TMMsdk
+ */
 const sdk = new SDK();
 window.TMMTMM_JS_SDK = sdk;
 window.gameScore = 0;
@@ -10,8 +13,15 @@ window.gameScore = 0;
 if (CUT_APP_ENV !== 'build') {
   new VConsole();
 }
+/**
+ * 获取用户信息
+ */
 let user_info = store.get('_info', true);
 window.store = store;
+
+/**
+ * 获取授权
+ */
 const getCode = () => {
   if (!user_info) {
     sdk.ready(() => {
@@ -31,8 +41,12 @@ const getCode = () => {
   }
   return true;
 };
-
 window.getCode = getCode;
+
+/**
+ * 请求用户信息
+ * @param {*} data
+ */
 const getAuth = (data) => {
   let params = formatData(data, true);
   $.ajax({
@@ -76,11 +90,10 @@ const getAuth = (data) => {
   }
 })();
 
-$('.ph').on('click', function (e) {
-  e.stopPropagation();
-  console.log(11111);
-});
-
+/**
+ * 获取排名信息
+ * @param {*} data
+ */
 const getRankList = (data = {}) => {
   console.log(user_info);
   data.openid = user_info.openid;
@@ -117,7 +130,12 @@ const getRankList = (data = {}) => {
     },
   });
 };
+window.getRankList = getRankList;
 
+/**
+ * 比赛结束同步比分
+ * @param {*} data
+ */
 const sendScore = (data) => {
   window.gameScore = 0;
   data.openid = user_info.openid;
@@ -132,9 +150,13 @@ const sendScore = (data) => {
     },
   });
 };
-
 window.sendScore = sendScore;
 
+/**
+ * 请求接口前数据处理函数
+ * @param {*} data  数据
+ * @param {boolean} isMd5 是否需要签名
+ */
 function formatData(data, isMd5) {
   let params = '';
   data['appid'] = appid;
@@ -158,35 +180,9 @@ function formatData(data, isMd5) {
   return params;
 }
 
-window.sendScore = sendScore;
-window.getRankList = getRankList;
-
-if (horizontal) {
-  $('.rank-list').css('height', '90%');
-} else {
-  $('.rank-list').css('height', '70%');
-}
-$('.rank-list').on(TOUCH_START, function (e) {
-  e.stopPropagation();
-});
-
-$('.rank-list').on(TOUCH_END, function (e) {
-  e.stopPropagation();
-});
-
-$('.rank-list').on(TOUCH_MOVE, function (e) {
-  e.stopPropagation();
-});
-
-$('.rank-list .close').on('click', function (e) {
-  $('.rank-list').addClass('animate__animated animate__bounceOut');
-  $('.rank-list').on('animationend', function () {
-    $('.rank-list').hide();
-    $('.rank-list').removeClass('animate__animated animate__bounceOut');
-    $('.rank-list').off('animationend');
-  });
-});
-
+/**
+ * 显示排行榜
+ */
 const showRankList = () => {
   if (window._dragger) {
     window._dragger.endDrag();
@@ -205,6 +201,9 @@ const showRankList = () => {
 };
 window.showRankList = showRankList;
 
+/**
+ * loading进度条
+ */
 let tick = 0;
 let runAuth;
 const laodingRun = () => {
@@ -226,4 +225,38 @@ const laodingRun = () => {
   }
 };
 window.laodingRun = laodingRun;
-startModule('scripts/main');
+
+/**
+ * 页面初始化
+ */
+const init = () => {
+  if (horizontal) {
+    $('.rank-list').css('height', '90%');
+  } else {
+    $('.rank-list').css('height', '70%');
+  }
+  $('.rank-list').on(TOUCH_START, function (e) {
+    e.stopPropagation();
+  });
+
+  $('.rank-list').on(TOUCH_END, function (e) {
+    e.stopPropagation();
+  });
+
+  $('.rank-list').on(TOUCH_MOVE, function (e) {
+    e.stopPropagation();
+  });
+
+  $('.rank-list .close').on('click', function (e) {
+    $('.rank-list').addClass('animate__animated animate__bounceOut');
+    $('.rank-list').on('animationend', function () {
+      $('.rank-list').hide();
+      $('.rank-list').removeClass('animate__animated animate__bounceOut');
+      $('.rank-list').off('animationend');
+    });
+  });
+
+  startModule('scripts/main');
+};
+
+init();
