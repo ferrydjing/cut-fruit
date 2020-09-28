@@ -1280,8 +1280,8 @@ define('scripts/factory/fruit.js', function (exports) {
     boom: ['js/libs/images/fruit/boom.png', 66 * globalScale, 68 * globalScale, 26 * globalScale, 0, 0, null],
     peach: [
       'js/libs/images/fruit/peach.png',
-      62 * globalScale,
-      59 * globalScale,
+      72 * globalScale,
+      72 * globalScale,
       37 * globalScale,
       -50 * globalScale,
       0,
@@ -1289,8 +1289,8 @@ define('scripts/factory/fruit.js', function (exports) {
     ],
     sandia: [
       'js/libs/images/fruit/sandia.png',
-      98 * globalScale,
-      85 * globalScale,
+      100 * globalScale,
+      94 * globalScale,
       38 * globalScale,
       -100 * globalScale,
       0,
@@ -1298,8 +1298,8 @@ define('scripts/factory/fruit.js', function (exports) {
     ],
     apple: [
       'js/libs/images/fruit/apple.png',
-      66 * globalScale,
-      66 * globalScale,
+      67 * globalScale,
+      89 * globalScale,
       31 * globalScale,
       -54 * globalScale,
       0,
@@ -1307,8 +1307,8 @@ define('scripts/factory/fruit.js', function (exports) {
     ],
     banana: [
       'js/libs/images/fruit/banana.png',
-      126 * globalScale,
-      50 * globalScale,
+      127 * globalScale,
+      76 * globalScale,
       43 * globalScale,
       90 * globalScale,
       0,
@@ -1316,8 +1316,8 @@ define('scripts/factory/fruit.js', function (exports) {
     ],
     basaha: [
       'js/libs/images/fruit/basaha.png',
+      66 * globalScale,
       68 * globalScale,
-      72 * globalScale,
       32 * globalScale,
       -135 * globalScale,
       0,
